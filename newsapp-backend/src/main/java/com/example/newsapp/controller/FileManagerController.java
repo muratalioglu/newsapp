@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectResult;
+import com.sun.istack.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/files")
@@ -36,8 +39,11 @@ public class FileManagerController {
     @Value("${AWS_SECRET_KEY}")
     private String awsSecretKey;
 
+    @Value("${AWS_BUCKET_NAME}")
+    private String bucketName;
+
     @PostMapping
-    public ResponseEntity<?> uploadFile(@RequestParam(name = "file") MultipartFile multipartFile) {
+    public ResponseEntity<?> uploadFile(@RequestParam(name = "file") @NotNull MultipartFile multipartFile) {
 
         AWSCredentials credentials = new BasicAWSCredentials(awsAccessKey, awsSecretKey);
 
@@ -47,8 +53,6 @@ public class FileManagerController {
                         .withCredentials(new AWSStaticCredentialsProvider(credentials))
                         .withRegion(Regions.EU_CENTRAL_1)
                         .build();
-
-        final String bucketName = "newsapp-bucket-807863322";
 
         ObjectMetadata data = new ObjectMetadata();
         data.setContentType(multipartFile.getContentType());
@@ -66,11 +70,16 @@ public class FileManagerController {
             log.error(e.getMessage(), e);
         }
 
-        String imageUrl = "https://" + bucketName + ".s3.amazonaws.com/" + multipartFile.getOriginalFilename();
+        String url = UriComponentsBuilder.newInstance()
+                .scheme("https")
+                .host(bucketName + ".s3.amazonaws.com")
+                .path("/{filename}")
+                .buildAndExpand(multipartFile.getOriginalFilename())
+                .toUriString();
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .header("url", imageUrl)
+                .header("url", url)
                 .build();
     }
 }
