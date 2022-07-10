@@ -8,4 +8,6 @@ import java.util.List;
 public interface NewsRepository extends JpaRepository<News, Integer> {
 
     List<News> findAllByDeletedFalse();
+
+    boolean existsByTitleIgnoreCaseAndDeletedFalse(String title);
 }
