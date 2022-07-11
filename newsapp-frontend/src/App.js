@@ -9,11 +9,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:8080/news", {
-      headers: {
-        Accept: 'application/json'
-      }
-    }).then(res => res.json())
+    fetch("http://localhost:8080/news").then(res => res.json())
     .then(data => this.setState({ news: data }))
   }
 
