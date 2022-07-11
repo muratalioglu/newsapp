@@ -10,4 +10,6 @@ public interface NewsRepository extends JpaRepository<News, Integer> {
     List<News> findAllByDeletedFalse();
 
     boolean existsByTitleIgnoreCaseAndDeletedFalse(String title);
+
+    News findByIdAndDeletedFalse(Integer id);
 }

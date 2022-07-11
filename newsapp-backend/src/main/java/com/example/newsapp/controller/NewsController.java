@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
@@ -41,5 +43,16 @@ public class NewsController {
                 .status(HttpStatus.CREATED)
                 .header("NewsId", newsId.toString())
                 .build();
+    }
+
+    @PatchMapping("{id}")
+    public ResponseEntity<?> updateNews(@PathVariable @Positive Integer id,
+                                        @RequestParam(required = false) String title,
+                                        @RequestParam(required = false) String content,
+                                        @RequestParam(required = false) String imageUrl) {
+
+        newsService.updateNews(id, title, content, imageUrl);
+
+        return ResponseEntity.noContent().build();
     }
 }

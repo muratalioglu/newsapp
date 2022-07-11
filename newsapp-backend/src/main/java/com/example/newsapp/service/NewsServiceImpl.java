@@ -54,6 +54,45 @@ public class NewsServiceImpl implements NewsService {
         return news.getId();
     }
 
+    @Override
+    public void updateNews(Integer id, String title, String content, String imageUrl) {
+
+        News news = newsRepository.findByIdAndDeletedFalse(id);
+        if (news == null)
+            throw new RuntimeException(String.format("News with id %s not found.", id));
+
+        boolean updated = false;
+
+        if (title != null) {
+            title = title.trim();
+
+            if (!title.equals(news.getTitle())) {
+                news.setTitle(title);
+                updated = true;
+            }
+        }
+
+        if (content != null) {
+            content = content.trim();
+
+            if (!content.equals(news.getContent())) {
+                news.setContent(content);
+                updated = true;
+            }
+        }
+
+        if (imageUrl != null) {
+
+            if (!imageUrl.equals(news.getImageUrl())) {
+                news.setImageUrl(imageUrl);
+                updated = true;
+            }
+        }
+
+        if (updated)
+            newsRepository.save(news);
+    }
+
     private void validateTitleExistence(String title) {
 
         boolean titleExists = newsRepository.existsByTitleIgnoreCaseAndDeletedFalse(title);
