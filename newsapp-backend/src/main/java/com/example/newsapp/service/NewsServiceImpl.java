@@ -25,6 +25,7 @@ public class NewsServiceImpl implements NewsService {
         return newsRepository.findAllByDeletedFalse().stream()
                 .map(news ->
                         new NewsDTO(
+                                news.getId(),
                                 news.getTitle(),
                                 news.getContent(),
                                 news.getImageUrl(),
@@ -39,7 +40,7 @@ public class NewsServiceImpl implements NewsService {
     public Integer createNews(NewsInDTO dto) {
 
         String title = dto.getTitle().trim();
-        String content = dto.getTitle().trim();
+        String content = dto.getContent().trim();
 
         validateTitleExistence(title);
 

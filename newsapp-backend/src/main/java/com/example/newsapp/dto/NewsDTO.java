@@ -12,6 +12,8 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class NewsDTO {
 
+    Integer id;
+
     String title;
 
     String content;

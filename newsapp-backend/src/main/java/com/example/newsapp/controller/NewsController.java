@@ -22,6 +22,7 @@ public class NewsController {
     }
 
     @GetMapping
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<?> getNews() {
 
         List<NewsDTO> newsDTOList = newsService.getNews();
