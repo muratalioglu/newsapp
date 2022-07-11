@@ -7,7 +7,6 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,6 +43,8 @@ public class FileManagerController {
     @PostMapping
     public ResponseEntity<?> uploadFile(@RequestParam(name = "file") @NotNull MultipartFile multipartFile) {
 
+
+
         AWSCredentials credentials = new BasicAWSCredentials(awsAccessKey, awsSecretKey);
 
         AmazonS3 s3Client =
@@ -57,9 +58,8 @@ public class FileManagerController {
         data.setContentType(multipartFile.getContentType());
         data.setContentLength(multipartFile.getSize());
 
-        PutObjectResult result = null;
         try {
-            result = s3Client.putObject(
+            s3Client.putObject(
                     bucketName,
                     multipartFile.getOriginalFilename(),
                     multipartFile.getInputStream(),
