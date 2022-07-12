@@ -55,4 +55,12 @@ public class NewsController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> deleteNews(@PathVariable @Positive Integer id) {
+
+        newsService.deleteNews(id);
+
+        return ResponseEntity.noContent().build();
+    }
 }

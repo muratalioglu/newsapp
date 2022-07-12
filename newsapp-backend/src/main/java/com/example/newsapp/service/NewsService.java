@@ -12,4 +12,6 @@ public interface NewsService {
     Integer createNews(NewsInDTO dto);
 
     void updateNews(Integer id, String title, String content, String imageUrl);
+
+    void deleteNews(Integer id);
 }

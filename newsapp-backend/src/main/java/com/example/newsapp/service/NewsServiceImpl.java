@@ -7,6 +7,7 @@ import com.example.newsapp.repository.NewsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,7 +58,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public void updateNews(Integer id, String title, String content, String imageUrl) {
 
-        News news = newsRepository.findByIdAndDeletedFalse(id);
+        News news = getNews(id);
         if (news == null)
             throw new RuntimeException(String.format("News with id %s not found.", id));
 
@@ -90,7 +91,28 @@ public class NewsServiceImpl implements NewsService {
         }
 
         if (updated)
-            newsRepository.save(news);
+            saveNews(news);
+    }
+
+    @Override
+    public void deleteNews(Integer id) {
+
+        News news = getNews(id);
+        if (news == null)
+            throw new RuntimeException(String.format("News with id %s not found.", id));
+
+        news.setDeleted(true);
+        news.setDeleteTime(new Timestamp(System.currentTimeMillis()));
+
+        saveNews(news);
+    }
+
+    private void saveNews(News news) {
+        newsRepository.save(news);
+    }
+
+    private News getNews(Integer id) {
+        return newsRepository.findByIdAndDeletedFalse(id);
     }
 
     private void validateTitleExistence(String title) {
