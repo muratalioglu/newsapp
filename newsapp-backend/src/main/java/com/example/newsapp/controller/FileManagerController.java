@@ -20,7 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.imageio.ImageIO;
 import javax.validation.constraints.NotNull;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @RestController
@@ -43,7 +47,7 @@ public class FileManagerController {
     @PostMapping
     public ResponseEntity<?> uploadFile(@RequestParam(name = "file") @NotNull MultipartFile multipartFile) {
 
-
+        byte[] resizedImageByteArray = resizeImage(multipartFile);
 
         AWSCredentials credentials = new BasicAWSCredentials(awsAccessKey, awsSecretKey);
 
@@ -56,18 +60,14 @@ public class FileManagerController {
 
         ObjectMetadata data = new ObjectMetadata();
         data.setContentType(multipartFile.getContentType());
-        data.setContentLength(multipartFile.getSize());
+        data.setContentLength(resizedImageByteArray.length);
 
-        try {
-            s3Client.putObject(
-                    bucketName,
-                    multipartFile.getOriginalFilename(),
-                    multipartFile.getInputStream(),
-                    data
-            );
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
+        s3Client.putObject(
+                bucketName,
+                multipartFile.getOriginalFilename(),
+                new ByteArrayInputStream(resizedImageByteArray),
+                data
+        );
 
         String url = UriComponentsBuilder.newInstance()
                 .scheme("https")
@@ -80,5 +80,29 @@ public class FileManagerController {
                 .status(HttpStatus.CREATED)
                 .header("url", url)
                 .build();
+    }
+
+    private byte[] resizeImage(MultipartFile sourceFile) {
+
+        BufferedImage originalImage = null;
+        try {
+            originalImage = ImageIO.read(new ByteArrayInputStream(sourceFile.getBytes()));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+
+        if (originalImage == null)
+            throw new RuntimeException("Image cannot be null!");
+
+        BufferedImage resultImage = new BufferedImage(700, 400, BufferedImage.TYPE_INT_RGB);
+        resultImage.getGraphics().drawImage(originalImage, 0, 0, 700, 400, null);
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(resultImage, "jpg", byteArrayOutputStream);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+        return byteArrayOutputStream.toByteArray();
     }
 }
