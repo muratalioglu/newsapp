@@ -81,12 +81,12 @@ public class NewsServiceImpl implements NewsService {
             }
         }
 
-        if (imageUrl != null) {
-
-            if (!imageUrl.equals(news.getImageUrl())) {
-                news.setImageUrl(imageUrl);
-                updated = true;
-            }
+        if (imageUrl == null && news.getImageUrl() != null) {
+            news.setImageUrl(null);
+            updated = true;
+        } else if (imageUrl != null && !imageUrl.equals(news.getImageUrl())) {
+            news.setImageUrl(imageUrl);
+            updated = true;
         }
 
         if (updated)
