@@ -9,6 +9,8 @@ public interface NewsService {
 
     List<NewsDTO> getNews();
 
+    NewsDTO getNews(Integer id);
+
     Integer createNews(NewsInDTO dto);
 
     void updateNews(Integer id, String title, String content, String imageUrl);

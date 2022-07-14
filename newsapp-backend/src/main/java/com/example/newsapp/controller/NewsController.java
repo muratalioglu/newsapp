@@ -34,6 +34,15 @@ public class NewsController {
                 ResponseEntity.ok(newsDTOList);
     }
 
+    @GetMapping("{id}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<?> getNews(@PathVariable @Positive Integer id) {
+
+        NewsDTO newsDTO = newsService.getNews(id);
+
+        return ResponseEntity.ok(newsDTO);
+    }
+
     @PostMapping
     public ResponseEntity<?> createNews(@RequestBody NewsInDTO dto) {
 

@@ -38,6 +38,21 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    public NewsDTO getNews(Integer id) {
+
+        News news = newsRepository.findByIdAndDeletedFalse(id);
+
+        return new NewsDTO(
+                news.getId(),
+                news.getTitle(),
+                news.getContent(),
+                news.getImageUrl(),
+                news.getCreateTime(),
+                news.getUpdateTime()
+        );
+    }
+
+    @Override
     public Integer createNews(NewsInDTO dto) {
 
         String title = dto.getTitle().trim();
@@ -58,7 +73,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public void updateNews(Integer id, String title, String content, String imageUrl) {
 
-        News news = getNews(id);
+        News news = findNews(id);
         if (news == null)
             throw new RuntimeException(String.format("News with id %s not found.", id));
 
@@ -97,7 +112,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public void deleteNews(Integer id) {
 
-        News news = getNews(id);
+        News news = findNews(id);
         if (news == null)
             throw new RuntimeException(String.format("News with id %s not found.", id));
 
@@ -111,7 +126,7 @@ public class NewsServiceImpl implements NewsService {
         newsRepository.save(news);
     }
 
-    private News getNews(Integer id) {
+    private News findNews(Integer id) {
         return newsRepository.findByIdAndDeletedFalse(id);
     }
 
