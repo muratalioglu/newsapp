@@ -105,8 +105,10 @@ public class NewsServiceImpl implements NewsService {
             updated = true;
         }
 
-        if (updated)
+        if (updated) {
+            news.setUpdateTime(new Timestamp(System.currentTimeMillis()));
             saveNews(news);
+        }
     }
 
     @Override
