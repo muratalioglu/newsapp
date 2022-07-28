@@ -44,6 +44,7 @@ public class NewsController {
     }
 
     @PostMapping
+    @CrossOrigin
     public ResponseEntity<?> createNews(@RequestBody NewsInDTO dto) {
 
         Integer newsId = newsService.createNews(dto);
