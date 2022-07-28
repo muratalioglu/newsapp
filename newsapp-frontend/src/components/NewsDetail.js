@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-function NewsDetail() {    
+const NewsDetail = () => {    
 
     const [news, setNews] = useState({"title": null, "content": null, "imageUrl": null});
 

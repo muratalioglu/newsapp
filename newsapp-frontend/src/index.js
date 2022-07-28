@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import App from './App';
 import NewsDetail from './components/NewsDetail';
+import CreateNews from './components/CreateNews';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -14,6 +15,7 @@ root.render(
     <Routes>
       <Route path="/" element={<App />} />
         <Route path="/news/:newsId" element={<NewsDetail />} />
+        <Route path='/news/create' element={<CreateNews />} />
     </Routes>
   </BrowserRouter>
 );
