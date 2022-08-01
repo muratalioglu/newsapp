@@ -56,6 +56,7 @@ public class NewsController {
     }
 
     @PatchMapping("{id}")
+    @CrossOrigin
     public ResponseEntity<?> updateNews(@PathVariable @Positive Integer id,
                                         @RequestParam(required = false) String title,
                                         @RequestParam(required = false) String content,

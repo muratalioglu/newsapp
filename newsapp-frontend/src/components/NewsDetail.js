@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const NewsDetail = () => {    
 
     const [news, setNews] = useState({"title": null, "content": null, "imageUrl": null});
-
+    
     let { newsId } = useParams();
 
     useEffect(() => {
@@ -25,9 +25,17 @@ const NewsDetail = () => {
 
     return (
         <div>
+            <Link to="/">Home</Link>
             <h3>{news.title}</h3>
             <p>{news.content}</p>
             <img src={news.imageUrl} alt={news.title} />
+            <p>
+                <Link 
+                    to={"/news/edit/" + newsId}
+                    state={news}>
+                    Edit
+                </Link>
+            </p>
         </div>
     )
 };

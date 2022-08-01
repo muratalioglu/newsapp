@@ -1,12 +1,13 @@
 import { useState } from "react";
 
-const CreateNews = () => {
+import { Link, useLocation, useParams } from "react-router-dom";
 
-    const [news, setNews] = useState({
-        title: "",
-        content: "",
-        imageUrl: ""
-    })
+const EditNews = () => {
+
+    const { newsId } = useParams();
+
+    const location = useLocation();
+    const [news, setNews] = useState(location.state);    
 
     const handleTitleInputChange = (e) => {        
         setNews(            
@@ -39,32 +40,25 @@ const CreateNews = () => {
 
         e.preventDefault();
 
-        fetch(`http://localhost:8080/news`, 
+        const formData = new FormData();
+        formData.append("title", news.title)
+        formData.append("content", news.content)
+        formData.append("imageUrl", news.imageUrl)
+
+        fetch(`http://localhost:8080/news/${newsId}`,
             {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    "title": news.title,
-                    "content": news.content,
-                    "imageUrl": news.imageUrl
-                })
+                method: "PATCH",
+                body: formData
             }
         )
 
-        setNews(
-            (news) => ({
-                title: "",
-                content: "",
-                imageUrl: ""
-            })
-        )
-    }
+        window.location.href = `/news/${newsId}`;
+    };
 
     return (
         <div>
-            <h3>Create News</h3>
+            <Link to="/">Home</Link>
+            <h3>Edit News</h3>
             <form onSubmit={sendNewsForm}>
                 <table>
                     <tbody>
@@ -94,6 +88,7 @@ const CreateNews = () => {
             </form>
         </div>
     )
+
 };
 
-export default CreateNews;
+export default EditNews;

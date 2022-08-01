@@ -5,6 +5,7 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import App from './App';
+import EditNews from './components/EditNews';
 import NewsDetail from './components/NewsDetail';
 import CreateNews from './components/CreateNews';
 
@@ -15,7 +16,8 @@ root.render(
     <Routes>
       <Route path="/" element={<App />} />
         <Route path="/news/:newsId" element={<NewsDetail />} />
-        <Route path='/news/create' element={<CreateNews />} />
+        <Route path="/news/create" element={<CreateNews />} />
+        <Route path="/news/edit/:newsId" element={<EditNews />} />
     </Routes>
   </BrowserRouter>
 );
