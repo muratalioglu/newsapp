@@ -5,7 +5,9 @@ import com.example.newsapp.dto.NewsInDTO;
 import com.example.newsapp.model.News;
 import com.example.newsapp.repository.NewsRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -137,6 +139,6 @@ public class NewsServiceImpl implements NewsService {
         boolean titleExists = newsRepository.existsByTitleIgnoreCaseAndDeletedFalse(title);
 
         if (titleExists)
-            throw new RuntimeException("The title in use!");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The title in use!");
     }
 }

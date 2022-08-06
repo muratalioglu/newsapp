@@ -52,6 +52,11 @@ const CreateNews = () => {
                 })
             }
         )
+        .then(response => {
+            if (response.status === 409) {
+                console.log("The title is in use!")
+            }
+        })        
 
         setNews(
             (news) => ({
