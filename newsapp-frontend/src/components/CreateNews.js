@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Navbar from "./Navbar";
 
 const CreateNews = () => {
 
@@ -69,6 +70,7 @@ const CreateNews = () => {
 
     return (
         <div>
+            <Navbar />
             <h3>Create News</h3>
             <form onSubmit={sendNewsForm}>
                 <table>
