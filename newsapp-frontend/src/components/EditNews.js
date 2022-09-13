@@ -1,7 +1,8 @@
-import { Button, Stack, TextField } from "@mui/material";
+import { Button, CircularProgress, Stack, TextField } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useState } from "react";
 
-import { Link, useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import Navbar from "./Navbar";
 
 const EditNews = () => {
@@ -9,7 +10,11 @@ const EditNews = () => {
     const { newsId } = useParams();
 
     const location = useLocation();
-    const [news, setNews] = useState(location.state);    
+    const [news, setNews] = useState(location.state);
+    const [selectedImageFile, setSelectedImageFile] = useState({
+        file: "",
+        preview: ""
+    });
 
     const handleTitleInputChange = (e) => {        
         setNews(            
@@ -29,23 +34,48 @@ const EditNews = () => {
         )
     };
 
-    const handleImageUrlInputChange = (e) => {
-        setNews(
-            (news) => ({
-                ...news,
-                imageUrl: e.target.value
+    const handleImageInputChange = (e) => {
+        if (e.target.files.length) {
+            setSelectedImageFile(
+                () => ({
+                    file: e.target.files[0],
+                    preview: URL.createObjectURL(e.target.files[0])
+                })
+            )
+        }
+    };
+
+    const handleImageInputRemove = () => {
+        setSelectedImageFile(
+            () => ({
+                file: "",
+                preview: ""
             })
         )
     };
 
-    const sendNewsForm = (e) => {
+    const uploadImageFile = async (imageFormData) => {
+        return fetch(`http://localhost:8080/files`,
+            {
+                method: "POST",
+                body: imageFormData
+            }
+        );
+    }
+
+    const sendNewsForm = async (e) => {
 
         e.preventDefault();
+
+        const imageFormData = new FormData();
+        imageFormData.append("file", selectedImageFile.file);
+
+        const response = await uploadImageFile(imageFormData);
 
         const formData = new FormData();
         formData.append("title", news.title)
         formData.append("content", news.content)
-        formData.append("imageUrl", news.imageUrl)
+        formData.append("imageUrl", response.headers.get("location"))
 
         fetch(`http://localhost:8080/news/${newsId}`,
             {
@@ -54,7 +84,7 @@ const EditNews = () => {
             }
         )
 
-        window.location.href = `/news/${newsId}`;
+        //window.location.href = `/news/${newsId}`;
     };
 
     return (
@@ -65,9 +95,21 @@ const EditNews = () => {
                 <Stack spacing={2}>
                     <TextField id="title" label="Title" variant="outlined" value={news.title} onChange={handleTitleInputChange} />
                     <TextField id="content" label="Content" multiline fullWidth rows={10} value={news.content} onChange={handleContentInputChange} />
-                </Stack>
-                <p><Button variant="contained" type="file" name="filename" onChange={handleImageUrlInputChange}>Choose Image</Button></p>
-                <p><Button variant="contained">Publish</Button></p>
+                </Stack>                
+                    {selectedImageFile.preview.length ? 
+                        (<div>
+                            <img src={selectedImageFile.preview} style={{ width: "auto", maxHeight: 100 }}  />
+                        </div>) : 
+                        <label id="clickLabel">Upload photo</label>
+                    }
+                <p>
+                    <Button variant="contained" component="label">
+                        Choose Image
+                        <input hidden type="file" accept="image/*" onChange={handleImageInputChange} />
+                    </Button>
+                    {selectedImageFile.preview.length ? (<Button variant="outlined" startIcon={<DeleteIcon />} component="label" onClick={handleImageInputRemove}>Remove</Button>) : <div />}
+                </p>
+                <p><Button variant="contained" type="submit">Publish</Button></p>
             </form>
         </div>
     )

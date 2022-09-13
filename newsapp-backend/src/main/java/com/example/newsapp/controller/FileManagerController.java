@@ -6,17 +6,16 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -45,6 +44,7 @@ public class FileManagerController {
     private String bucketName;
 
     @PostMapping
+    @CrossOrigin(origins = "http://localhost:3000", exposedHeaders = { HttpHeaders.LOCATION })
     public ResponseEntity<?> uploadFile(@RequestParam(name = "file") @NotNull MultipartFile multipartFile) {
 
         byte[] resizedImageByteArray = resizeImage(multipartFile);
@@ -78,7 +78,7 @@ public class FileManagerController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .header("url", url)
+                .header(HttpHeaders.LOCATION, url)
                 .build();
     }
 
