@@ -49,7 +49,7 @@ public class FileManagerServiceImpl implements FileManagerService {
     @Override
     public String uploadFile(MultipartFile multipartFile) {
 
-        log.info("Uploading the image: {}", multipartFile);
+        log.info("Uploading the image: {}", multipartFile.getOriginalFilename());
 
         File file;
         try {
