@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Stack, TextField } from "@mui/material";
+import { Button, Stack, TextField } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState } from "react";
 
@@ -54,23 +54,24 @@ const EditNews = () => {
         )
     };
 
-    const uploadImageFile = async (imageFormData) => {
+    const uploadImageFile = (e) => {
+        
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.append("file", selectedImageFile.file)
+
         return fetch(`http://localhost:8080/files`,
             {
                 method: "POST",
-                body: imageFormData
+                body: formData
             }
         );
     }
 
     const sendNewsForm = async (e) => {
 
-        e.preventDefault();
-
-        const imageFormData = new FormData();
-        imageFormData.append("file", selectedImageFile.file);
-
-        const response = await uploadImageFile(imageFormData);
+        const response = await uploadImageFile(e);
 
         const formData = new FormData();
         formData.append("title", news.title)
