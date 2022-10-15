@@ -7,6 +7,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.google.common.util.concurrent.Uninterruptibles;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +22,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -50,6 +54,10 @@ public class FileManagerServiceImpl implements FileManagerService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        String fileFormat = determineImageFileFormat(file);
+        if (fileFormat.equals("webp"))
+            file = convertImageFileToJpeg(file);
 
         byte[] resizedImageByteArray = resizeImage(file);
 
@@ -81,6 +89,52 @@ public class FileManagerServiceImpl implements FileManagerService {
                 .path("/{filename}")
                 .buildAndExpand(multipartFile.getOriginalFilename())
                 .toUriString();
+    }
+
+    private File convertImageFileToJpeg(File file) {
+
+        log.info("Converting image file's extension to jpeg: {}", file.getName());
+
+        int dotIndex = file.getName().lastIndexOf('.');
+        String updatedName = file.getName().substring(0, dotIndex).concat(".jpg");
+
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.directory(new File(System.getProperty("java.io.tmpdir")));
+        processBuilder.command("magick", file.getName(), updatedName);
+
+        try {
+            CompletableFuture<Process> conversionProcess = processBuilder.start().onExit();
+
+            while (!conversionProcess.isDone())
+                Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        log.info("The conversion has been completed. New name of the file: {}", updatedName);
+
+        return new File(System.getProperty("java.io.tmpdir") + "/" + updatedName);
+    }
+
+    private String determineImageFileFormat(File file) {
+
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.directory(new File(System.getProperty("java.io.tmpdir")));
+        processBuilder.command("magick", "identify", file.getName());
+
+        Process process;
+        String output;
+        try {
+            process = processBuilder.start();
+
+            InputStream inputStream = process.getInputStream();
+            output = new String(inputStream.readAllBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return output.split(" ")[1].toLowerCase();
     }
 
     private byte[] resizeImage(File file) {
