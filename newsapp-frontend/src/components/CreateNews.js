@@ -9,6 +9,11 @@ const CreateNews = () => {
         imageUrl: ""
     })
 
+    const [selectedImageFile, setSelectedImageFile] = useState({
+        file: "",
+        preview: ""
+    });
+
     const handleTitleInputChange = (e) => {        
         setNews(            
             (news) => ({
