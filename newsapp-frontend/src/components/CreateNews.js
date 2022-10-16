@@ -1,3 +1,4 @@
+import { Button, Stack, TextField } from "@mui/material";
 import { useState } from "react";
 import Navbar from "./Navbar";
 
@@ -95,31 +96,17 @@ const CreateNews = () => {
             <Navbar />
             <h3>Create News</h3>
             <form onSubmit={sendNewsForm}>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td><label>Title</label></td>
-                        </tr>
-                        <tr>
-                            <td><input type="text" name="title" value={news.title} onChange={handleTitleInputChange} /></td>
-                        </tr>
-                        <tr>
-                            <td><label>Content</label></td>
-                        </tr>
-                        <tr>
-                            <td><textarea rows="10" cols="50" name="content" value={news.content} onChange={handleContentInputChange} /></td>
-                        </tr>
-                        <tr>
-                            <td><label>Görsel</label></td>
-                        </tr>
-                        <tr>
-                            <td><input type="file" accept="image/*" onChange={handleImageInputChange} /></td>
-                        </tr>
-                        <tr>
-                            <td><button type="submit">Publish</button></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <Stack spacing={2}>
+                <TextField id="title" label="Title" variant="outlined" value={news.title} onChange={handleTitleInputChange} />
+                <TextField id="content" label="Content" multiline fullWidth rows={10} value={news.content} onChange={handleContentInputChange} />
+            </Stack>
+            <p>
+                <Button variant="contained" component="label">
+                    Choose Image
+                    <input hidden type="file" accept="image/*" onChange={handleImageInputChange} />
+                </Button>
+            </p>
+            <p><Button variant="contained" type="submit">Send</Button></p>
             </form>
         </div>
     )

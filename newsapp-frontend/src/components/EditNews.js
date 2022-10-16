@@ -106,7 +106,7 @@ const EditNews = () => {
                     </Button>
                     {(selectedImageFile.preview && selectedImageFile.preview.length) ? (<Button variant="outlined" startIcon={<DeleteIcon />} component="label" onClick={handleImageInputRemove}>Remove</Button>) :  null}
                 </p>
-                <p><Button variant="contained" type="submit">Publish</Button></p>
+                <p><Button variant="contained" type="submit">Send</Button></p>
             </form>
         </div>
     )
