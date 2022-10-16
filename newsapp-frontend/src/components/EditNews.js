@@ -1,6 +1,6 @@
 import { Button, Stack, TextField } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useLocation, useParams } from "react-router-dom";
 import Navbar from "./Navbar";
@@ -67,7 +67,7 @@ const EditNews = () => {
                 body: formData
             }
         );
-    }
+    };
 
     const sendNewsForm = async (e) => {
 
@@ -85,7 +85,7 @@ const EditNews = () => {
             }
         )
 
-        //window.location.href = `/news/${newsId}`;
+        window.location.replace(`/news/${newsId}`);
     };
 
     return (
@@ -104,7 +104,7 @@ const EditNews = () => {
                         Choose Image
                         <input hidden type="file" accept="image/*" onChange={handleImageInputChange} />
                     </Button>
-                    {selectedImageFile.preview.length ? (<Button variant="outlined" startIcon={<DeleteIcon />} component="label" onClick={handleImageInputRemove}>Remove</Button>) : <div />}
+                    {(selectedImageFile.preview && selectedImageFile.preview.length) ? (<Button variant="outlined" startIcon={<DeleteIcon />} component="label" onClick={handleImageInputRemove}>Remove</Button>) :  null}
                 </p>
                 <p><Button variant="contained" type="submit">Publish</Button></p>
             </form>
