@@ -96,7 +96,7 @@ const CreateNews = () => {
                             <td><label>Görsel</label></td>
                         </tr>
                         <tr>
-                            <td><input type="file" name="filename" onChange={handleImageUrlInputChange} /></td>
+                            <td><input type="file" accept="image/*" onChange={handleImageInputChange} /></td>
                         </tr>
                         <tr>
                             <td><button type="submit">Publish</button></td>
