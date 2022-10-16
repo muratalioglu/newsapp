@@ -96,13 +96,9 @@ const EditNews = () => {
                 <Stack spacing={2}>
                     <TextField id="title" label="Title" variant="outlined" value={news.title} onChange={handleTitleInputChange} />
                     <TextField id="content" label="Content" multiline fullWidth rows={10} value={news.content} onChange={handleContentInputChange} />
-                </Stack>                
-                    {selectedImageFile.preview.length ? 
-                        (<div>
-                            <img src={selectedImageFile.preview} style={{ width: "auto", maxHeight: 100 }}  />
-                        </div>) : 
-                        <label id="clickLabel">Upload photo</label>
-                    }
+                </Stack>                   
+                    {/* <ImageConditional imageFile={selectedImageFile} imageUrl={news.imageUrl} /> */}
+                    <img src={news.imageUrl} />
                 <p>
                     <Button variant="contained" component="label">
                         Choose Image
