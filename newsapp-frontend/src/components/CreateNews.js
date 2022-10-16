@@ -54,23 +54,16 @@ const CreateNews = () => {
                 body: JSON.stringify({
                     "title": news.title,
                     "content": news.content,
-                    "imageUrl": news.imageUrl
+                    "imageUrl": imageUploadResponse.headers.get("location")
                 })
             }
-        )
-        .then(response => {
-            if (response.status === 409) {
-                console.log("The title is in use!")
-            }
-        })        
+        );
 
-        setNews(
-            (news) => ({
-                title: "",
-                content: "",
-                imageUrl: ""
-            })
-        )
+        if (createNewsResponse.status === 409)
+            console.log("The title is in use");
+        
+        let newsId = createNewsResponse.headers.get("NewsId");
+        window.location.replace(`/news/${newsId}`);
     }
 
     return (
