@@ -32,20 +32,44 @@ const CreateNews = () => {
         )
     };
 
-    const handleImageUrlInputChange = (e) => {
-        setNews(
-            (news) => ({
-                ...news,
-                imageUrl: e.target.value
-            })
-        )
+    const handleImageInputChange = (e) => {
+        if (e.target.files.length) {
+            setSelectedImageFile(
+                () => ({
+                    file: e.target.files[0],
+                    preview: URL.createObjectURL(e.target.files[0])
+                })
+            )
+        } else {
+            setSelectedImageFile(
+                () => ({
+                    file: "",
+                    preview: ""
+                })
+            )
+        }
     };
 
-    const sendNewsForm = (e) => {
-
+    const uploadImageFile = (e) => {
+        
         e.preventDefault();
 
-        fetch(`http://localhost:8080/news`, 
+        const formData = new FormData();
+        formData.append("file", selectedImageFile.file)
+
+        return fetch(`http://localhost:8080/files`,
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+    };
+
+    const sendNewsForm = async (e) => {
+
+        const imageUploadResponse = await uploadImageFile(e);
+
+        let createNewsResponse = await fetch(`http://localhost:8080/news`, 
             {
                 method: "POST",
                 headers: {
